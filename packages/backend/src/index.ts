@@ -6,6 +6,7 @@ import { errorHandler } from './middleware/error-handler.js';
 import { registerCemeteryRoutes } from './modules/cemeteries/cemetery.routes.js';
 import { registerReviewRoutes } from './modules/reviews/review.routes.js';
 import { registerGeocodeRoutes } from './modules/geocode/geocode.routes.js';
+import { registerChatbotRoutes } from './routes/chatbot.js';
 
 export function buildApp() {
   const app = Fastify({
@@ -36,6 +37,7 @@ export function buildApp() {
   registerCemeteryRoutes(app);
   registerReviewRoutes(app);
   registerGeocodeRoutes(app);
+  registerChatbotRoutes(app);
 
   return app;
 }
