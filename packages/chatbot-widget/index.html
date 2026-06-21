@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chatbot Widget Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1f2937; background: #f9fafb; }
+    .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+    h1 { font-size: 32px; margin-bottom: 16px; }
+    p { font-size: 16px; line-height: 1.6; color: #4b5563; margin-bottom: 20px; }
+    .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .card h2 { font-size: 20px; margin-bottom: 12px; }
+    pre { background: #1f2937; color: #e5e7eb; border-radius: 8px; padding: 16px; font-size: 14px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Coreforge Chatbot Widget</h1>
+    <p>This demo page shows the embeddable chatbot widget. Click the chat bubble in the bottom-right corner to try it out.</p>
+
+    <div class="card">
+      <h2>Embed Code</h2>
+      <p>Add this to any website:</p>
+      <pre>&lt;script src="https://cdn.example.com/chatbot-widget.iife.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  CoreforgeChatbot.init({
+    apiBaseUrl: '/api/chatbot',
+    companyName: 'Your Company',
+    primaryColor: '#2563eb',
+    welcomeMessage: 'Hi there! How can we help?'
+  });
+&lt;/script&gt;</pre>
+    </div>
+
+    <div class="card">
+      <h2>Configuration Options</h2>
+      <pre>{
+  apiBaseUrl: '/api/chatbot',      // Backend API URL
+  companyName: 'Your Company',     // Brand name
+  primaryColor: '#2563eb',         // Brand color
+  position: 'bottom-right',        // or 'bottom-left'
+  welcomeMessage: 'Hi!',           // First bot message
+  title: 'Chat with us',           // Panel header title
+  bookingEnabled: false,           // Enable booking flow
+}</pre>
+    </div>
+  </div>
+
+  <!-- Load the built widget -->
+  <script src="/dist/chatbot-widget.iife.js"></script>
+  <script>
+    CoreforgeChatbot.init({
+      apiBaseUrl: '/api/chatbot',
+      companyName: 'Coreforge',
+      primaryColor: '#2563eb',
+      welcomeMessage: 'Welcome to Coreforge! 🚀 How can I help you today?',
+      title: 'Coreforge Chat',
+      bookingEnabled: false,
+    });
+  </script>
+</body>
+</html>
