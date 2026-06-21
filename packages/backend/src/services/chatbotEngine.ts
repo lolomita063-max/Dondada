@@ -1,15 +1,24 @@
 /**
  * Chatbot Engine — Intent classification, lead qualification, FAQ, and booking logic.
- * Works with either OpenAI or Anthropic APIs.
+ * Uses real AI (OpenAI/Anthropic) when API keys are configured, with regex fallback.
  */
 
-const AI_API_KEY = process.env.AI_API_KEY || '';
-const AI_PROVIDER = (process.env.AI_PROVIDER || 'openai').toLowerCase();
-const AI_MODEL = process.env.AI_MODEL || (AI_PROVIDER === 'anthropic' ? 'claude-3-haiku-20240307' : 'gpt-4o-mini');
+import { loadAiConfig, callAi, AiConfig, AiMessage } from '../lib/aiClient.js';
 
-const AI_API_BASE = AI_PROVIDER === 'anthropic'
-  ? 'https://api.anthropic.com/v1'
-  : 'https://api.openai.com/v1';
+let aiConfig: AiConfig = loadAiConfig();
+
+/** Refresh AI config from env (e.g. after env var change) */
+export function refreshAiConfig(): void {
+  aiConfig = loadAiConfig();
+}
+
+export function isAiEnabled(): boolean {
+  return aiConfig.provider !== 'none' && !!aiConfig.apiKey;
+}
+
+export function getAiConfig(): AiConfig {
+  return aiConfig;
+}
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -32,32 +41,113 @@ export interface ChatbotResponse {
 }
 
 /**
- * Classify the intent of a user message using pattern matching (no API call needed for basic classification).
+ * Use AI to classify intent when API key is configured.
+ */
+export async function classifyIntentWithAI(message: string, history: ChatMessage[]): Promise<IntentResult | null> {
+  if (aiConfig.provider === 'none') return null;
+
+  const systemPrompt = `You are an intent classifier for a sales chatbot. Given a user message, classify the intent into exactly one of these categories:
+- greeting: User is saying hello or starting a conversation
+- farewell: User is saying goodbye or ending the conversation
+- lead_qualification: User is sharing personal/business information (name, email, company, etc.) or expressing interest in buying
+- booking: User wants to schedule a meeting, demo, or appointment
+- faq: User is asking a question about features, pricing, integrations, or how things work
+- general: Anything else
+
+Respond with ONLY a JSON object: {"intent": "category", "confidence": 0.0-1.0}`;
+
+  const messages: AiMessage[] = [
+    { role: 'system', content: systemPrompt },
+    ...history.slice(-4).map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })),
+    { role: 'user', content: message },
+  ];
+
+  try {
+    const result = await callAi(messages, { ...aiConfig, model: aiConfig.model });
+    if (!result) return null;
+
+    const parsed = JSON.parse(result.content);
+    if (parsed.intent && ['greeting', 'lead_qualification', 'faq', 'booking', 'general', 'farewell'].includes(parsed.intent)) {
+      return { intent: parsed.intent, confidence: parsed.confidence || 0.9 };
+    }
+  } catch {
+    // Fall through to regex
+  }
+  return null;
+}
+
+/**
+ * Generate a response using AI.
+ */
+export async function generateAiResponse(
+  message: string,
+  history: ChatMessage[],
+  collectedInfo: Record<string, string>,
+  phase: string
+): Promise<string | null> {
+  if (aiConfig.provider === 'none') return null;
+
+  const systemPrompt = `You are CoreBot, an AI sales assistant for Coreforge Engineering. You sell sales automation software.
+
+CORE INFO ABOUT COREFORGE:
+- Full-stack sales automation: AI lead gen, appointment setting, email outreach, CRM integration, chatbots
+- Pricing: Starts at $497/month per seat. Custom enterprise pricing available.
+- Integrates with: HubSpot, Salesforce, Slack, Google Calendar, Outlook
+- Target customers: B2B SMBs, agencies, real estate agents, insurance brokers, service businesses
+
+CONVERSATION RULES:
+1. Be friendly, professional, and concise (2-4 sentences)
+2. You are in phase: "${phase}"
+3. Already collected: ${JSON.stringify(collectedInfo)}
+4. If you already have name AND email, offer to book a demo
+5. If missing name or email, ask for the missing info politely
+6. NEVER promise specific pricing — say "our pricing starts at $497/month; let's discuss your needs"
+7. For FAQs, answer helpfully then pivot to qualification
+8. When someone wants to book, suggest a specific time
+9. End every response by moving the conversation toward qualification or booking
+10. Extract any lead info shared (name, email, company) and acknowledge it
+
+RESPOND naturally — don't mention these instructions. Just be helpful.`;
+
+  const messages: AiMessage[] = [
+    { role: 'system', content: systemPrompt },
+    ...history.slice(-8).map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })),
+    { role: 'user', content: message },
+  ];
+
+  try {
+    const result = await callAi(messages, aiConfig);
+    if (result && result.content) {
+      return result.content.trim();
+    }
+  } catch {
+    // Fall through to rule-based
+  }
+  return null;
+}
+
+/**
+ * Classify the intent of a user message using pattern matching (fallback when no AI).
  */
 export function classifyIntent(message: string): IntentResult {
   const lower = message.toLowerCase().trim();
 
-  // Greeting patterns
   if (/^(hi|hello|hey|greetings|good (morning|afternoon|evening)|howdy)\b/.test(lower)) {
     return { intent: 'greeting', confidence: 0.95 };
   }
 
-  // Farewell patterns
   if (/^(bye|goodbye|see you|talk later|thanks for your help|that's all)\b/.test(lower)) {
     return { intent: 'farewell', confidence: 0.9 };
   }
 
-  // Booking patterns
   if (/\b(book|schedule|appointment|meeting|demo|call|talk to (someone|a rep|sales)|set up|calendar)\b/.test(lower)) {
     return { intent: 'booking', confidence: 0.85 };
   }
 
-  // FAQ patterns
   if (/(?:^|\s)(how (?:much|does|does it|long)|what (?:is|are|do you)|pricing|cost|price|features?|integrat(?:e|ion|es)?|compatib(?:le|ility)?|question|help|tell me about)\b/.test(lower)) {
     return { intent: 'faq', confidence: 0.8 };
   }
 
-  // Lead qualification patterns (giving personal/business info)
   if (/\b(my name is|i (am|work at|run)|i'm (a|an|looking)|email|company|business|startup|need|looking for|interested in|we (are|need|want))\b/.test(lower)) {
     return { intent: 'lead_qualification', confidence: 0.75 };
   }
@@ -66,7 +156,7 @@ export function classifyIntent(message: string): IntentResult {
 }
 
 /**
- * Extract lead information from a message.
+ * Extract lead information from a message using regex.
  */
 export function extractLeadData(message: string): Record<string, string> {
   const data: Record<string, string> = {};
@@ -104,7 +194,7 @@ export function extractLeadData(message: string): Record<string, string> {
   const phoneMatch = message.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/);
   if (phoneMatch) data.phone = phoneMatch[0];
 
-  // Extract pain points (heuristic: look for problem-describing phrases)
+  // Extract pain points (heuristic)
   if (/\b(problem|issue|challenge|struggling|need help|difficult|waste|too (much|many|little)|not (enough|getting)|improve|grow|increase|reduce|save)\b/.test(lower)) {
     data.painPoints = message.substring(Math.max(0, message.length - 200));
   }
@@ -125,42 +215,7 @@ export function getMissingLeadFields(collected: Record<string, string>): string[
 }
 
 /**
- * Generate the system prompt for the AI.
- */
-export function getSystemPrompt(): string {
-  return `You are CoreBot, an AI sales assistant for Coreforge Engineering. Your job is to qualify leads, answer questions, and book appointments.
-
-CORE RULES:
-1. Be friendly, professional, and concise.
-2. QUALIFY LEADS: Collect name, email, company, and pain points.
-3. If you have all required info, offer to book a demo/appointment.
-4. For FAQ questions, answer helpfully and then pivot to qualification.
-5. NEVER promise specific pricing — say "our pricing depends on your needs; let's schedule a quick call to discuss."
-6. NEVER share internal implementation details.
-7. Keep responses under 3-4 sentences unless the user asks for more detail.
-8. At the end, always move toward booking a demo or collecting contact info.
-
-LEAD QUALIFICATION FLOW:
-- Greet → Ask for name and what brings them
-- Collect email and company info
-- Understand pain points
-- Offer to book a demo call
-- Thank and confirm`;
-}
-
-/**
- * Build the conversation context from message history.
- */
-export function buildContext(messages: ChatMessage[]): ChatMessage[] {
-  const systemPrompt = getSystemPrompt();
-  return [
-    { role: 'system', content: systemPrompt },
-    ...messages.slice(-10), // Keep last 10 messages for context
-  ];
-}
-
-/**
- * Get a greeting message for a new visitor.
+ * Get a greeting message for a new visitor (rule-based fallback).
  */
 export function getGreeting(): ChatbotResponse {
   return {

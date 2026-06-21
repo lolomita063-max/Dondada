@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { processMessage, startSession, getAnalyticsSummary } from '../services/conversationService.js';
+import { isAiEnabled, getAiConfig, refreshAiConfig } from '../services/chatbotEngine.js';
 
 export function registerChatbotRoutes(app: FastifyInstance): void {
   // Health check
@@ -9,7 +10,20 @@ export function registerChatbotRoutes(app: FastifyInstance): void {
       data: {
         status: 'ok',
         version: '1.0.0',
+        ai: isAiEnabled() ? getAiConfig().provider : 'fallback-rules',
         timestamp: new Date().toISOString(),
+      },
+    };
+  });
+
+  // AI status
+  app.get('/api/v1/chatbot/ai-status', async () => {
+    return {
+      success: true,
+      data: {
+        enabled: isAiEnabled(),
+        provider: isAiEnabled() ? getAiConfig().provider : 'none',
+        model: isAiEnabled() ? getAiConfig().model : 'rule-based-fallback',
       },
     };
   });
@@ -34,7 +48,7 @@ export function registerChatbotRoutes(app: FastifyInstance): void {
     };
   });
 
-  // Send a message
+  // Send a message (async — may call AI APIs)
   app.post<{
     Body: { message: string; sessionId?: string };
   }>('/api/v1/chatbot/message', async (request, reply) => {
@@ -51,7 +65,7 @@ export function registerChatbotRoutes(app: FastifyInstance): void {
                       (request.headers['x-session-id'] as string) ||
                       `sess_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 
-    const response = processMessage(sessionId, message);
+    const response = await processMessage(sessionId, message);
 
     reply.header('x-session-id', sessionId);
     return {

@@ -1,15 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
   classifyIntent,
+  classifyIntentWithAI,
+  generateAiResponse,
   extractLeadData,
   getMissingLeadFields,
   getGreeting,
+  isAiEnabled,
   ChatMessage,
   ChatbotResponse,
 } from './chatbotEngine.js';
 import {
   createConversation,
-  getConversationBySession,
   updateConversation,
   qualifyConversation,
   createLead,
@@ -28,7 +30,6 @@ interface SessionState {
   intentCounts: Record<string, number>;
 }
 
-// In-memory session store (for MVP; use Redis in production)
 const sessions = new Map<string, SessionState>();
 
 export function startSession(sessionId: string, source = 'widget'): ChatbotResponse {
@@ -48,19 +49,27 @@ export function startSession(sessionId: string, source = 'widget'): ChatbotRespo
   return getGreeting();
 }
 
-export function processMessage(sessionId: string, message: string): ChatbotResponse {
+export async function processMessage(sessionId: string, message: string): Promise<ChatbotResponse> {
   let state = sessions.get(sessionId);
   
   if (!state) {
-    // Auto-start session if not found
+    // Auto-start session
     return startSession(sessionId);
   }
 
   // Add user message to history
   state.messageHistory.push({ role: 'user', content: message });
 
-  // Classify intent
-  const intent = classifyIntent(message);
+  // Classify intent — try AI first, fall back to regex
+  let intent = classifyIntent(message);
+  
+  if (isAiEnabled()) {
+    const aiIntent = await classifyIntentWithAI(message, state.messageHistory);
+    if (aiIntent) {
+      intent = aiIntent;
+    }
+  }
+  
   state.intentCounts[intent.intent] = (state.intentCounts[intent.intent] || 0) + 1;
 
   // Extract lead data
@@ -75,6 +84,44 @@ export function processMessage(sessionId: string, message: string): ChatbotRespo
   let responseMessage = '';
   let nextPhase = state.phase;
 
+  // Try AI-generated response first
+  if (isAiEnabled()) {
+    const aiResponse = await generateAiResponse(
+      message,
+      state.messageHistory,
+      state.collectedData,
+      state.phase
+    );
+    if (aiResponse) {
+      responseMessage = aiResponse;
+      // Parse the AI response to determine phase transitions
+      const missing = getMissingLeadFields(state.collectedData);
+      if (missing.length === 0 && state.phase === 'collecting_info') {
+        // AI should offer booking when it has all info
+        qualifyConversation(state.conversationId, intent.intent);
+        createLead(state.conversationId, state.collectedData as any);
+        trackAnalytics('lead_qualified', sessionId, { conversationId: state.conversationId });
+        nextPhase = 'booking';
+      } else if (missing.length > 0 && state.phase === 'initial') {
+        nextPhase = 'collecting_info';
+      }
+
+      // Update state
+      state.phase = nextPhase;
+      state.messageHistory.push({ role: 'assistant', content: responseMessage });
+      trackAnalytics('message_processed', sessionId, { intent: intent.intent, phase: nextPhase, ai: true });
+
+      return {
+        message: responseMessage,
+        intent,
+        leadData: state.collectedData,
+        shouldCollectLeadInfo: getMissingLeadFields(state.collectedData).length > 0,
+        conversationPhase: nextPhase,
+      };
+    }
+  }
+
+  // Fall back to rule-based response
   switch (intent.intent) {
     case 'greeting': {
       if (state.phase === 'initial') {
@@ -96,7 +143,6 @@ export function processMessage(sessionId: string, message: string): ChatbotRespo
       const missing = getMissingLeadFields(state.collectedData);
 
       if (missing.length === 0) {
-        // We have enough info — qualify and offer booking
         qualifyConversation(state.conversationId, 'lead_qualification');
         createLead(state.conversationId, state.collectedData as any);
         trackAnalytics('lead_qualified', sessionId, { conversationId: state.conversationId });
@@ -116,7 +162,6 @@ export function processMessage(sessionId: string, message: string): ChatbotRespo
     }
 
     case 'faq': {
-      // Handle FAQ — answer and pivot to qualification
       responseMessage = handleFAQ(message);
       const missing = getMissingLeadFields(state.collectedData);
       if (missing.length > 0) {
@@ -129,7 +174,6 @@ export function processMessage(sessionId: string, message: string): ChatbotRespo
     }
 
     case 'booking': {
-      // Extract date/time from message
       const timeMatch = message.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
       const dayMatch = message.match(/\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday|tomorrow|today)\b/i);
       
@@ -140,13 +184,12 @@ export function processMessage(sessionId: string, message: string): ChatbotRespo
             ? `${dayMatch[1]} at ${timeMatch[0]}`
             : `Next available slot at ${timeMatch[0]}`;
           
-          // Record the appointment in the database
           try {
             createAppointment(lead.id, scheduledAt, 30);
             updateLeadStatus(lead.id, 'booked');
             trackAnalytics('appointment_booked', sessionId, { leadId: lead.id });
           } catch (e) {
-            // Appointment table may not have lead yet
+            // May not have lead yet
           }
         }
 
@@ -182,8 +225,6 @@ export function processMessage(sessionId: string, message: string): ChatbotRespo
   // Update state
   state.phase = nextPhase;
   state.messageHistory.push({ role: 'assistant', content: responseMessage });
-
-  // Record analytics
   trackAnalytics('message_processed', sessionId, { intent: intent.intent, phase: nextPhase });
 
   return {
@@ -196,13 +237,13 @@ export function processMessage(sessionId: string, message: string): ChatbotRespo
 }
 
 /**
- * Handle FAQ responses.
+ * Handle FAQ responses (rule-based fallback).
  */
 function handleFAQ(message: string): string {
   const lower = message.toLowerCase();
 
   if (/\b(pricing|cost|price|how much)\b/.test(lower)) {
-    return "Our pricing is tailored to your needs — we have flexible tiers starting from a basic plan. I'd recommend a quick call to discuss what fits best for your business!";
+    return "Our pricing is tailored to your needs — we have flexible tiers starting at $497/month. I'd recommend a quick call to discuss what fits best for your business!";
   }
   if (/\b(feature|capabilit|what does it do|what is)\b.*\b(chatbot|platform|software)\b/.test(lower)) {
     return "Coreforge provides full-stack sales automation: AI lead generation, smart appointment setting, email outreach, CRM automation, and conversational AI chatbots — all in one platform.";
