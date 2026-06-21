@@ -1,0 +1,221 @@
+/* Coreforge Chatbot Widget Styles */
+
+:root {
+  --cf-primary: #4F46E5;
+  --cf-primary-dark: #3730A3;
+  --cf-bg: #FFFFFF;
+  --cf-bg-secondary: #F9FAFB;
+  --cf-text: #111827;
+  --cf-text-secondary: #6B7280;
+  --cf-border: #E5E7EB;
+  --cf-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --cf-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --cf-radius: 12px;
+  --cf-radius-sm: 8px;
+}
+
+.cf-widget-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.cf-chat-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--cf-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--cf-shadow-lg);
+  transition: transform 0.2s, background 0.2s;
+  font-size: 24px;
+}
+
+.cf-chat-button:hover {
+  transform: scale(1.05);
+  background: var(--cf-primary-dark);
+}
+
+.cf-chat-button.open {
+  transform: rotate(90deg);
+}
+
+.cf-chat-window {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  width: 380px;
+  max-height: 600px;
+  background: var(--cf-bg);
+  border-radius: var(--cf-radius);
+  box-shadow: var(--cf-shadow-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: cf-slide-up 0.3s ease-out;
+}
+
+@keyframes cf-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cf-header {
+  background: var(--cf-primary);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cf-header-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.cf-header-subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.cf-close-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 20px;
+  opacity: 0.8;
+}
+
+.cf-close-btn:hover {
+  opacity: 1;
+}
+
+.cf-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--cf-bg-secondary);
+}
+
+.cf-message {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: var(--cf-radius-sm);
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.cf-message.user {
+  align-self: flex-end;
+  background: var(--cf-primary);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.cf-message.bot {
+  align-self: flex-start;
+  background: white;
+  color: var(--cf-text);
+  border: 1px solid var(--cf-border);
+  border-bottom-left-radius: 4px;
+}
+
+.cf-message.bot.typing {
+  display: flex;
+  gap: 4px;
+  padding: 14px 18px;
+}
+
+.cf-typing-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--cf-text-secondary);
+  border-radius: 50%;
+  animation: cf-bounce 1.4s infinite ease-in-out;
+}
+
+.cf-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.cf-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes cf-bounce {
+  0%, 80%, 100% { transform: scale(0.6); }
+  40% { transform: scale(1); }
+}
+
+.cf-input-area {
+  padding: 12px 16px;
+  border-top: 1px solid var(--cf-border);
+  display: flex;
+  gap: 8px;
+  background: white;
+}
+
+.cf-input {
+  flex: 1;
+  border: 1px solid var(--cf-border);
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.cf-input:focus {
+  border-color: var(--cf-primary);
+}
+
+.cf-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--cf-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.cf-send-btn:hover {
+  background: var(--cf-primary-dark);
+}
+
+.cf-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cf-powered {
+  text-align: center;
+  padding: 8px;
+  font-size: 11px;
+  color: var(--cf-text-secondary);
+  border-top: 1px solid var(--cf-border);
+  background: white;
+}
+
+.cf-powered a {
+  color: var(--cf-primary);
+  text-decoration: none;
+}
