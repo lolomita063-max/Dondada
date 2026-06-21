@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Coreforge Engineering — Sales Automation Suite</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+* { font-family: 'Inter', sans-serif; }
+html { scroll-behavior: smooth; }
+.gradient-bg { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%); }
+.gradient-text { background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.card-hover { transition: all 0.3s ease; }
+.card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+<!-- Nav -->
+<nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-100">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+<a href="#" class="flex items-center gap-2 text-xl font-bold text-gray-900">
+<svg class="w-7 h-7 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+Coreforge Engineering
+</a>
+<div class="hidden sm:flex items-center gap-6">
+<a href="#products" class="text-sm font-medium text-gray-600 hover:text-gray-900">Products</a>
+<a href="#features" class="text-sm font-medium text-gray-600 hover:text-gray-900">Features</a>
+<a href="#pricing" class="text-sm font-medium text-gray-600 hover:text-gray-900">Pricing</a>
+<a href="#contact" class="text-sm font-medium text-gray-600 hover:text-gray-900">Contact</a>
+<a href="#products" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Get Started</a>
+</div>
+</div>
+</nav>
+
+<!-- Hero -->
+<section class="gradient-bg pt-24 pb-20 sm:pt-32 sm:pb-28">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white/80 text-sm mb-8">
+<span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+<span>AI-Powered Sales Automation</span>
+</div>
+<h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-6">
+Your Sales Pipeline<br/>
+<span class="gradient-text">On Autopilot</span>
+</h1>
+<p class="text-lg sm:text-xl text-blue-100 max-w-3xl mx-auto mb-10 leading-relaxed">
+Coreforge Engineering combines AI-powered lead generation, intelligent chatbots, automated email outreach, and CRM integration to help B2B businesses find, engage, and convert leads — without the overhead.
+</p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+<a href="#products" class="px-8 py-4 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-colors shadow-lg text-lg">
+See Our Products
+</a>
+<a href="#demo" class="px-8 py-4 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20 text-lg">
+Live Demo ↓
+</a>
+</div>
+</div>
+</section>
+
+<!-- Trust bar -->
+<section class="bg-white border-b border-gray-100 py-8">
+<div class="max-w-7xl mx-auto px-4 text-center">
+<p class="text-xs font-medium uppercase tracking-widest text-gray-400 mb-4">Trusted by growing businesses</p>
+<div class="flex flex-wrap items-center justify-center gap-8 opacity-40">
+<span class="text-lg font-bold text-gray-500">Redfin</span>
+<span class="text-lg font-bold text-gray-500">NY Life</span>
+<span class="text-lg font-bold text-gray-500">Elite Electric</span>
+<span class="text-lg font-bold text-gray-500">Ameriprise</span>
+</div>
+</div>
+</section>
+
+<!-- Products -->
+<section id="products" class="py-20 bg-white">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-16">
+<h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Full-Stack Sales Automation</h2>
+<p class="text-lg text-gray-600 max-w-2xl mx-auto">Four powerful products that work together to automate your entire sales funnel from lead generation to close.</p>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- AI Chatbot -->
+<div class="card-hover bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
+<div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+<svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+</div>
+<h3 class="text-lg font-bold text-gray-900 mb-2">AI Chatbot Pro</h3>
+<p class="text-sm text-gray-600 mb-4 flex-1">AI-powered lead qualification chatbot. Embeds on your website, captures leads 24/7, books appointments automatically.</p>
+<div class="text-2xl font-bold text-gray-900 mb-4">$497<span class="text-sm font-normal text-gray-500">/mo</span></div>
+<a href="https://buy.stripe.com/fZu28reZGdCW5X24bZ7g40c" target="_blank" class="block w-full py-3 bg-purple-600 hover:bg-purple-700 text-white text-center font-medium rounded-xl transition-colors">Buy Now →</a>
+</div>
+
+<!-- Email Outreach -->
+<div class="card-hover bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
+<div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+</div>
+<h3 class="text-lg font-bold text-gray-900 mb-2">Email Outreach</h3>
+<p class="text-sm text-gray-600 mb-4 flex-1">Multi-channel email campaigns with AI personalization. Smart sequencing, A/B testing, and deliverability optimization.</p>
+<div class="text-2xl font-bold text-gray-900 mb-4">$197<span class="text-sm font-normal text-gray-500">/mo</span></div>
+<a href="https://buy.stripe.com/cNi9AT3gY2Yi1GMdMz7g40e" target="_blank" class="block w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-center font-medium rounded-xl transition-colors">Buy Now →</a>
+</div>
+
+<!-- Lead Gen -->
+<div class="card-hover bg-white rounded-2xl border border-gray-200 p-6 flex flex-col">
+<div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+</div>
+<h3 class="text-lg font-bold text-gray-900 mb-2">Lead Gen Pro</h3>
+<p class="text-sm text-gray-600 mb-4 flex-1">AI-powered prospecting with intelligent lead scoring. Find and qualify your ideal customers before your competitors do.</p>
+<div class="text-2xl font-bold text-gray-900 mb-4">$297<span class="text-sm font-normal text-gray-500">/wk</span></div>
+<a href="https://buy.stripe.com/cNieVd7xefL4etyfUH7g40f" target="_blank" class="block w-full py-3 bg-green-600 hover:bg-green-700 text-white text-center font-medium rounded-xl transition-colors">Buy Now →</a>
+</div>
+
+<!-- Full Stack -->
+<div class="card-hover bg-white rounded-2xl border border-gray-200 p-6 flex flex-col ring-2 ring-blue-500">
+<div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-4">
+<svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+</div>
+<div class="flex items-center gap-1 mb-1">
+<h3 class="text-lg font-bold text-gray-900">Full Stack Suite</h3>
+<span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">BEST VALUE</span>
+</div>
+<p class="text-sm text-gray-600 mb-4 flex-1">Everything — AI Chatbot + Email Outreach + Lead Gen + CRM automation. Complete sales pipeline automation.</p>
+<div class="text-2xl font-bold text-gray-900 mb-4">$997<span class="text-sm font-normal text-gray-500">/mo</span></div>
+<a href="https://buy.stripe.com/28EeVd4l2dCW5X2cIv7g40d" target="_blank" class="block w-full py-3 bg-blue-600 hover:bg-blue-700 text-white text-center font-medium rounded-xl transition-colors">Buy Now →</a>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Live Demo Section -->
+<section id="demo" class="py-20 bg-gray-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-12">
+<h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Try Our AI Chatbot Live</h2>
+<p class="text-lg text-gray-600 max-w-2xl mx-auto">Click the chat bubble in the bottom-right corner to test drive our AI-powered lead qualification chatbot. It's like having a sales rep working 24/7.</p>
+</div>
+<div class="grid md:grid-cols-2 gap-8 items-center">
+<div class="bg-white rounded-2xl border border-gray-200 p-8">
+<h3 class="font-bold text-lg mb-4">What happens when a lead clicks?</h3>
+<ol class="space-y-4">
+<li class="flex items-start gap-3">
+<span class="flex-shrink-0 w-7 h-7 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center text-sm font-bold">1</span>
+<div><span class="font-semibold">Bot greets visitor</span><p class="text-sm text-gray-600">AI assistant introduces itself and asks for their name</p></div>
+</li>
+<li class="flex items-start gap-3">
+<span class="flex-shrink-0 w-7 h-7 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-sm font-bold">2</span>
+<div><span class="font-semibold">Lead qualification</span><p class="text-sm text-gray-600">Collects name, email, company info and pain points</p></div>
+</li>
+<li class="flex items-start gap-3">
+<span class="flex-shrink-0 w-7 h-7 bg-green-100 text-green-700 rounded-full flex items-center justify-center text-sm font-bold">3</span>
+<div><span class="font-semibold">Score & route</span><p class="text-sm text-gray-600">Lead is scored and qualified; high-value leads get instant alerts</p></div>
+</li>
+<li class="flex items-start gap-3">
+<span class="flex-shrink-0 w-7 h-7 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center text-sm font-bold">4</span>
+<div><span class="font-semibold">Book appointment</span><p class="text-sm text-gray-600">Bot offers to schedule a demo call — no human needed until closing</p></div>
+</li>
+</ol>
+</div>
+<div class="bg-white rounded-2xl border border-gray-200 p-8 text-center">
+<div class="text-6xl mb-4">🤖</div>
+<h3 class="text-xl font-bold mb-2">Ready to try it?</h3>
+<p class="text-gray-600 mb-4">Click the 💬 chat bubble in the bottom-right corner</p>
+<div class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full text-sm text-gray-500">
+<svg class="w-4 h-4 text-green-500 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/></svg>
+<span>Online — Try it now</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Features -->
+<section id="features" class="py-20 bg-white">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-16">
+<h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Why Coreforge Engineering?</h2>
+<p class="text-lg text-gray-600 max-w-2xl mx-auto">We combine AI, automation, and proven sales methodology into one seamless platform.</p>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+<div class="p-6">
+<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+<svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+</div>
+<h3 class="font-semibold text-gray-900 mb-2">AI-Powered</h3>
+<p class="text-sm text-gray-600">Advanced LLM-based chatbots and lead scoring. Your AI sales team never sleeps.</p>
+</div>
+<div class="p-6">
+<div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+</div>
+<h3 class="font-semibold text-gray-900 mb-2">Enterprise Security</h3>
+<p class="text-sm text-gray-600">SOC 2 compliant. Your data is encrypted in transit and at rest.</p>
+</div>
+<div class="p-6">
+<div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+<svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/></svg>
+</div>
+<h3 class="font-semibold text-gray-900 mb-2">Real-Time Analytics</h3>
+<p class="text-sm text-gray-600">Track conversations, lead scores, conversion rates, and ROI in one dashboard.</p>
+</div>
+<div class="p-6">
+<div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
+<svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+</div>
+<h3 class="font-semibold text-gray-900 mb-2">CRM Integration</h3>
+<p class="text-sm text-gray-600">Seamless syncing with HubSpot, Salesforce, and 200+ tools via API.</p>
+</div>
+<div class="p-6">
+<div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+</div>
+<h3 class="font-semibold text-gray-900 mb-2">24/7 Lead Capture</h3>
+<p class="text-sm text-gray-600">Never miss a lead again. Your AI chatbot works around the clock.</p>
+</div>
+<div class="p-6">
+<div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+</div>
+<h3 class="font-semibold text-gray-900 mb-2">Appointment Booking</h3>
+<p class="text-sm text-gray-600">Qualified leads can book directly into your calendar — no back-and-forth.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-20 bg-gray-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-12">
+<h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">What Our Customers Say</h2>
+</div>
+<div class="grid md:grid-cols-3 gap-8">
+<div class="bg-white rounded-2xl border border-gray-200 p-6">
+<div class="flex items-center gap-1 text-yellow-400 mb-3">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<p class="text-sm text-gray-600 mb-4">"The AI chatbot alone has saved us 20+ hours a week on lead qualification. Best investment we've made this year."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold">JD</div>
+<div><div class="text-sm font-semibold">John Doe</div><div class="text-xs text-gray-500">CEO, TechStart Solutions</div></div>
+</div>
+</div>
+<div class="bg-white rounded-2xl border border-gray-200 p-6">
+<div class="flex items-center gap-1 text-yellow-400 mb-3">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<p class="text-sm text-gray-600 mb-4">"We've tripled our lead conversion rate since switching to Coreforge. The automated outreach sequences are incredible."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-700 font-bold">AS</div>
+<div><div class="text-sm font-semibold">Alice Smith</div><div class="text-xs text-gray-500">VP Sales, GrowthCorp</div></div>
+</div>
+</div>
+<div class="bg-white rounded-2xl border border-gray-200 p-6">
+<div class="flex items-center gap-1 text-yellow-400 mb-3">
+<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+</div>
+<p class="text-sm text-gray-600 mb-4">"Setup was a breeze and the results were immediate. Our pipeline has never been this full — or this organized."</p>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 font-bold">MK</div>
+<div><div class="text-sm font-semibold">Mike K.</div><div class="text-xs text-gray-500">Founder, ScaleUp Ventures</div></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Contact / Booking -->
+<section id="contact" class="py-20 gradient-bg">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-3xl mx-auto text-center">
+<h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Ready to automate your sales?</h2>
+<p class="text-lg text-blue-100 mb-8">Schedule a free demo call with our team. We'll show you exactly how Coreforge can transform your sales pipeline.</p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+<a href="mailto:sales@coreforge.engineering" class="px-8 py-4 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-colors shadow-lg">
+Book a Demo Call
+</a>
+<a href="#products" class="px-8 py-4 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors border border-white/20">
+See Pricing
+</a>
+</div>
+<p class="text-blue-200 text-sm mt-6">No commitment. No credit card required. Just a conversation about your sales goals.</p>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-gray-400 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid sm:grid-cols-3 gap-8 mb-8">
+<div>
+<div class="flex items-center gap-2 text-white text-lg font-bold mb-3">
+<svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+Coreforge Engineering
+</div>
+<p class="text-sm">Full-stack sales automation for modern B2B businesses.</p>
+</div>
+<div>
+<h4 class="text-white font-semibold mb-3">Products</h4>
+<ul class="space-y-2 text-sm">
+<li>AI Chatbot Pro</li>
+<li>Email Outreach</li>
+<li>Lead Gen Pro</li>
+<li>Full Stack Suite</li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-semibold mb-3">Contact</h4>
+<ul class="space-y-2 text-sm">
+<li>sales@coreforge.engineering</li>
+<li>1-800-COREFORGE</li>
+<li>San Francisco, CA</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-gray-800 pt-8 text-center text-sm">
+&copy; 2026 Coreforge Engineering. All rights reserved.
+</div>
+</div>
+</section>
+
+<!-- Chatbot Widget -->
+<script src="/chatbot-widget.iife.js"></script>
+<script>
+CoreforgeChatbot.init({
+  apiBaseUrl: '/api/v1/chatbot',
+  companyName: 'Coreforge Engineering',
+  primaryColor: '#2563eb',
+  welcomeMessage: '👋 Welcome to Coreforge Engineering! I\'m your AI sales assistant. What brings you here today? Are you looking to automate your lead generation, add a chatbot to your site, or something else?',
+  title: 'Chat with Coreforge AI',
+  bookingEnabled: false,
+});
+</script>
+</body>
+</html>

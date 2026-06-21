@@ -1,5 +1,8 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import fastifyStatic from '@fastify/static';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { config } from './config.js';
 import { getDb, runMigrations, closeDb } from './db/connection.js';
 import { errorHandler } from './middleware/error-handler.js';
@@ -7,6 +10,8 @@ import { registerCemeteryRoutes } from './modules/cemeteries/cemetery.routes.js'
 import { registerReviewRoutes } from './modules/reviews/review.routes.js';
 import { registerGeocodeRoutes } from './modules/geocode/geocode.routes.js';
 import { registerChatbotRoutes } from './routes/chatbot.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export function buildApp() {
   const app = Fastify({
@@ -17,6 +22,13 @@ export function buildApp() {
   app.register(cors, {
     origin: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  });
+
+  // Serve landing page static files (including chatbot widget bundle)
+  app.register(fastifyStatic, {
+    root: path.join(__dirname, '..', '..', '..', 'packages', 'landing-page', 'public'),
+    prefix: '/',
+    wildcard: false,
   });
 
   // Set error handler
