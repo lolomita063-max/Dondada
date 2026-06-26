@@ -93,7 +93,19 @@ const server = http.createServer((req, res) => {
       return;
     }
     const ext = path.extname(filePath);
-    res.writeHead(200, { 'Content-Type': MIME_TYPES[ext] || 'application/octet-stream' });
+    const isHtml = ext === '.html';
+    const cacheControl = isHtml
+      ? 'no-cache, must-revalidate'
+      : 'public, max-age=31536000, immutable';
+    res.writeHead(200, {
+      'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
+      'Cache-Control': cacheControl,
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Access-Control-Allow-Origin': '*',
+    });
     res.end(data);
   });
 });
