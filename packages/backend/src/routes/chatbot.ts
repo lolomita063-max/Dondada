@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
 import { processMessage, startSession, getAnalyticsSummary } from '../services/conversationService.js';
 import { isAiEnabled, getAiConfig, refreshAiConfig } from '../services/chatbotEngine.js';
+import { getDb } from '../lib/database.js';
 
 export function registerChatbotRoutes(app: FastifyInstance): void {
   // Health check
@@ -84,5 +85,40 @@ export function registerChatbotRoutes(app: FastifyInstance): void {
       success: true,
       data: analytics,
     };
+  });
+
+  // Get conversation logs (last 50 conversations with messages)
+  app.get('/api/v1/chatbot/logs', async (request) => {
+    const db = getDb();
+    const limit = Math.min(parseInt((request.query as any)?.limit || '50'), 200);
+    
+    const conversations = db.prepare(`
+      SELECT c.id, c.session_id, c.visitor_name, c.visitor_email, c.visitor_company,
+             c.qualified, c.intent, c.source, c.created_at
+      FROM conversations c
+      ORDER BY c.created_at DESC
+      LIMIT ?
+    `).all(limit) as any[];
+
+    const logs = conversations.map((conv: any) => {
+      const messages = db.prepare(`
+        SELECT role, content, created_at FROM messages
+        WHERE conversation_id = ?
+        ORDER BY created_at ASC
+      `).all(conv.id);
+
+      return {
+        sessionId: conv.session_id,
+        visitor: { name: conv.visitor_name, email: conv.visitor_email, company: conv.visitor_company },
+        qualified: !!conv.qualified,
+        intent: conv.intent,
+        source: conv.source,
+        createdAt: conv.created_at,
+        messages: messages.map((m: any) => ({ role: m.role, content: m.content?.slice(0, 200), at: m.created_at })),
+        messageCount: (messages as any[]).length,
+      };
+    });
+
+    return { success: true, data: { total: conversations.length, logs } };
   });
 }
