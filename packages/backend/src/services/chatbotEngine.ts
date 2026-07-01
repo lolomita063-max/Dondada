@@ -219,9 +219,16 @@ export function getMissingLeadFields(collected: Record<string, string>): string[
  */
 export function getGreeting(): ChatbotResponse {
   return {
-    message: "Hi there! 👋 I'm CoreBot from Coreforge Engineering. I can help you learn about our sales automation platform or book a demo. Could I start by asking your name and what brings you here today?",
+    message: "Hi! 👋 Looking to automate your sales? I'm CoreBot — I can help you capture more leads, book demos, and close deals faster. What's your name and what kind of business do you run?",
     intent: { intent: 'greeting', confidence: 1 },
     shouldCollectLeadInfo: true,
     conversationPhase: 'initial',
   };
+}
+
+/**
+ * Get a referral prompt for when a conversation completes.
+ */
+export function getReferralPrompt(name?: string): string {
+  return `\n\n🤝 By the way ${name || 'friend'}, know someone who needs sales automation? Share our site with them — we appreciate every referral!`;
 }

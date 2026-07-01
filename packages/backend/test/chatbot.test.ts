@@ -82,7 +82,7 @@ describe('Missing Lead Fields', () => {
 describe('Greeting', () => {
   it('returns a greeting response', () => {
     const greeting = getGreeting();
-    expect(greeting.message).toContain('CoreBot');
+    expect(greeting.message).toContain("Looking to automate");
     expect(greeting.intent.intent).toBe('greeting');
     expect(greeting.shouldCollectLeadInfo).toBe(true);
     expect(greeting.conversationPhase).toBe('initial');

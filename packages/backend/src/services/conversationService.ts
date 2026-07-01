@@ -6,6 +6,7 @@ import {
   extractLeadData,
   getMissingLeadFields,
   getGreeting,
+  getReferralPrompt,
   isAiEnabled,
   ChatMessage,
   ChatbotResponse,
@@ -125,15 +126,15 @@ export async function processMessage(sessionId: string, message: string): Promis
   switch (intent.intent) {
     case 'greeting': {
       if (state.phase === 'initial') {
-        responseMessage = "Great to meet you! Could you tell me your name and a bit about what your business does? I'm here to help you find the right sales automation solution.";
+        responseMessage = "Great to meet you! What's your name and what business do you run? I'd love to show you how we help companies automate their sales and capture more leads.";
         nextPhase = 'collecting_info';
       } else {
-        responseMessage = "Hello again! Let's continue where we left off. ";
+        responseMessage = "Hey, welcome back! ";
         const missing = getMissingLeadFields(state.collectedData);
         if (missing.length > 0) {
           responseMessage += `I still need your ${missing.join(' and ')} to get started.`;
         } else {
-          responseMessage += "Would you like to book a demo to see our platform in action?";
+          responseMessage += "Ready to book that demo? Just tell me a day and time!";
         }
       }
       break;
@@ -193,7 +194,7 @@ export async function processMessage(sessionId: string, message: string): Promis
           }
         }
 
-        responseMessage = `Perfect! I've scheduled a demo for ${scheduledAt}. You'll receive a calendar invite shortly. In the meantime, feel free to ask any other questions!`;
+        responseMessage = `✅ Demo booked! I've scheduled a call for ${scheduledAt}. You'll get a calendar invite shortly.${getReferralPrompt(state.collectedData.name)}`;
         nextPhase = 'completed';
       } else if (dayMatch) {
         responseMessage = `Great, ${dayMatch[1]} works! What time would be best for you — morning or afternoon?`;
@@ -204,7 +205,7 @@ export async function processMessage(sessionId: string, message: string): Promis
     }
 
     case 'farewell': {
-      responseMessage = "Thanks for chatting! If you ever have more questions, feel free to come back. Have a great day! 😊";
+      responseMessage = `Thanks for chatting ${state.collectedData.name || 'friend'}! If you ever have more questions, come back anytime.${getReferralPrompt(state.collectedData.name)} 😊`;
       nextPhase = 'completed';
       break;
     }

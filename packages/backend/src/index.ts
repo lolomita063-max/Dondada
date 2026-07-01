@@ -287,6 +287,83 @@ app.get('/api', async () => {
   };
 });
 
+// Analytics dashboard
+app.get('/analytics', async (request, reply) => {
+  const { getDb } = await import('./lib/database.js');
+  const db = getDb();
+  
+  const totalConversations = (db.prepare('SELECT COUNT(*) as c FROM conversations').get() as any).c;
+  const qualifiedLeads = (db.prepare('SELECT COUNT(*) as c FROM conversations WHERE qualified = 1').get() as any).c;
+  const totalLeads = (db.prepare('SELECT COUNT(*) as c FROM leads').get() as any).c;
+  const bookedAppts = (db.prepare("SELECT COUNT(*) as c FROM appointments WHERE status IN ('confirmed','completed')").get() as any).c;
+  const conversationsToday = (db.prepare("SELECT COUNT(*) as c FROM conversations WHERE date(created_at) = date('now')").get() as any).c;
+  const leadsToday = (db.prepare("SELECT COUNT(*) as c FROM leads WHERE date(created_at) = date('now')").get() as any).c;
+  const messagesToday = (db.prepare("SELECT COUNT(*) as c FROM messages WHERE date(created_at) = date('now')").get() as any).c;
+  const topIntents = db.prepare(`
+    SELECT intent, COUNT(*) as count FROM conversations 
+    WHERE intent IS NOT NULL GROUP BY intent ORDER BY count DESC LIMIT 5
+  `).all() as any[];
+
+  const uptime = Math.floor((Date.now() - START_TIME) / 1000);
+
+  reply.header('Content-Type', 'text/html; charset=utf-8');
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coreforge — Analytics Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0F172A; color: #F1F5F9; padding: 40px 24px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { font-size: 28px; margin-bottom: 4px; }
+    .subtitle { color: #64748B; font-size: 14px; margin-bottom: 32px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .card { background: #1E293B; border-radius: 12px; padding: 24px; border: 1px solid #334155; }
+    .card .num { font-size: 36px; font-weight: 700; color: #A5B4FC; }
+    .card .label { font-size: 13px; color: #64748B; margin-top: 4px; }
+    .card .highlight { color: #34D399; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+    .chip { background: #1E293B; border: 1px solid #334155; border-radius: 8px; padding: 8px 16px; font-size: 13px; }
+    .chip .val { color: #A5B4FC; font-weight: 600; }
+    .footer { text-align: center; padding: 32px 0; color: #475569; font-size: 13px; }
+    .bar { display: inline-block; height: 8px; border-radius: 4px; background: #4F46E5; margin-right: 8px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Coreforge Analytics</h1>
+    <p class="subtitle">Live stats · Updating on refresh · Server uptime: ${Math.floor(uptime / 60)}m ${uptime % 60}s</p>
+    
+    <div class="grid">
+      <div class="card"><div class="num">${totalConversations}</div><div class="label">Total Conversations</div></div>
+      <div class="card"><div class="num ${qualifiedLeads > 0 ? 'highlight' : ''}">${qualifiedLeads}</div><div class="label">Qualified Leads</div></div>
+      <div class="card"><div class="num">${totalLeads}</div><div class="label">Leads Captured</div></div>
+      <div class="card"><div class="num">${bookedAppts}</div><div class="label">Demos Booked</div></div>
+    </div>
+
+    <div class="grid">
+      <div class="card"><div class="num">${conversationsToday}</div><div class="label">Conversations Today</div></div>
+      <div class="card"><div class="num">${leadsToday}</div><div class="label">Leads Today</div></div>
+      <div class="card"><div class="num">${messagesToday}</div><div class="label">Messages Today</div></div>
+      <div class="card"><div class="num">${totalConversations > 0 ? ((qualifiedLeads / totalConversations) * 100).toFixed(0) : 0}%</div><div class="label">Conversion Rate</div></div>
+    </div>
+
+    <h2 style="font-size:18px;margin-bottom:12px;">🎯 Top Intent Categories</h2>
+    <div class="row">
+      ${(topIntents as any[]).map((i: any) => 
+        `<div class="chip"><span class="val">${i.intent}</span> · ${i.count}</div>`
+      ).join('') || '<div class="chip" style="color:#64748B">No data yet</div>'}
+    </div>
+
+    <p style="color:#64748B;font-size:13px;margin-top:24px;">🔄 Refresh to see updated stats</p>
+    <div class="footer">Coreforge Engineering · AI Lead Qualification Platform</div>
+  </div>
+</body>
+</html>`;
+});
+
 // Monitoring health check with uptime
 app.get('/healthz', async () => {
   return {
@@ -301,6 +378,7 @@ try {
   await app.listen({ port: PORT, host: HOST });
   console.log(`🚀 Coreforge Chatbot API running on http://${HOST}:${PORT}`);
   console.log(`📋 Demo page: http://localhost:${PORT}/`);
+  console.log(`📊 Analytics: http://localhost:${PORT}/analytics`);
   console.log(`🔌 API: http://localhost:${PORT}/api`);
   console.log(`❤️  Health: http://localhost:${PORT}/healthz`);
   console.log(`⏱️  Uptime monitor active`);
