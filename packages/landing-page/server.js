@@ -74,8 +74,20 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Serve static files
+  // Clean URL routing for blog and SEO pages
   if (url === '/') url = '/index.html';
+  if (url === '/blog') url = '/blog.html';
+  if (url === '/robots.txt') url = '/robots.txt';
+  if (url === '/sitemap.xml') url = '/sitemap.xml';
+  if (url === '/og-image.svg') url = '/og-image.svg';
+  // Resolve /blog/slug to /blog/slug.html
+  if (url.startsWith('/blog/')) {
+    const blogUrl = url + '.html';
+    const blogPath = path.join(PUBLIC_DIR, blogUrl);
+    if (fs.existsSync(blogPath)) {
+      url = blogUrl;
+    }
+  }
 
   const filePath = path.join(PUBLIC_DIR, url);
 
